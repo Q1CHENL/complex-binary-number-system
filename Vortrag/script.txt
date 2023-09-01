@@ -1,0 +1,64 @@
+Vortrag Script: Performanzanalyse
+
+Jetzt kommen wir zum Teil: Performanzanalyse. Beginnen wir mit to_carthesian.
+
+In unserer Hauptimplementierung, bei der wir LUT und SIMD verwendet haben,
+konnten wir eine lineare Laufzeit erzielen. Mit SIMD haben wir durch
+Parallelisierung die Anzahl der Additionen von 2 auf 1 pro Iteration reduziert.
+Aber dabei müssen wir dennoch eine extra Add-operation für die Offset-
+Berechnung durchführen. Daher  haben wir gegenüber V1 insgesamt nur eine Load-
+Operation pro Iteration eingespart, deswegen ist auch der a0 bisschen kleiner
+als Koeffizient a1 der reine LUT Implementierung.
+
+Die naive Implementierung zeigt eine quadratische Laufzeit, da wir für jedes
+gesetzte Bit die Funktion exponent_of_base() zur Berechnung von (-1+i)^n
+aufrufen müssen. Da diese Funktion bereits in der Kategorie lineare Laufzeit
+liegt, ergibt das insgesamt O(n^2).
+
+Für unsere Zeitmessungen haben wir wie im Test das Programm mit randomisierten
+Eingaben verschiedener Längen von 8 bis 128 bit getestet, jeweils in 8-Bit-
+Schritten. Jede Eingabelaenge wurde 1.000.000 Mal ausgeführt.
+
+Der Graph zeigt, dass V0 und V1 beide tatsaechlich lineare Laufzeiten aufweisen.
+Allerdings ist V0 bei jeder Eingabelänge stets ein wenig schneller, und die
+Steigung ist auch geringer. Die naive Implementierung entspricht einem
+standardmäßigen quadratischen Algorithmus.
+
+Kommen wir zu to_bm1pi: Hier haben wir zwei Implementierungen, die beide eine
+lineare Laufzeit aufweisen. Unsere optimierte Version hat jedoch eine geringere
+Steigung, da sie, wo möglich, Nullen überspringt.
+
+Durch den Vergleich der beiden Implementierungen wird deutlich, dass unsere
+Optimierung in der Tat schneller ist. Interessanterweise wird die
+Implementierung sogar langsamer, wenn man versucht, mehr als 3
+aufeinanderfolgende Nullen zu überspringen. Das liegt daran, dass solche Muster
+seltener auftreten, die Überprüfung aber in jeder Iteration stattfindet.
+
+Es gibt auch Randfälle, in denen die Optimierung besonders effizient oder sogar
+langsamer ist. In Fällen mit vielen aufeinanderfolgenden Nullen ist die
+Optimierung deutlich schneller. Aber wenn die Eingabe jedoch fast nur Einsen
+enthält, kann die Optimierung langsamer sein.
+
+Abschließend möchte ich kurz den Einfluss des Caches ansprechen. Führt man unser
+Programm mit der Benchmark-Option und vielen Iterationen aus, z.B mit dieser
+Eingabe, ist die durchschnittliche Laufzeit viel kürzer als die in zuvor
+gezeigten Grafiken. Der Grund liegt daran, dass bei wiederholter Ausführung mit
+derselben Eingabe werden Daten wie die Zahlen aus der LUT im Cache gehalten und
+in der nächsten Iteration wiederverwendet, und daher viel weniger Cache- Misses.
+Dies ist genau der Grund, weshalb wir in der Performanzanalyse das Programm mit
+randomisierten Eingaben getestet  haben.
+
+Zum Abschluss fasse ich kurz unsere Arbeit zusammen: Um von Dezimal zu (−1 + i)
+zu konvertieren, nutzen wir wiederholte Division. Um das  zu beschleunigen,
+teilen wir, wenn möglich, durch höhere Potenzen der Basis. Fuer die  andere
+Richtung summieren wir die nötigen Potenzen auf. Eine Lookup- Tabelle verbessert
+hierbei die Effizienz erheblich. Wir haben auch umfassende Tests durchgeführt,
+und als  Ergebnis haben wir nun einen funktionierenden Rechner zwischen Basis 10
+und (−1 + i).
+
+Als Ausblick gibt es eine weitere Vorgehensweise fuer to_bm1pi, und zwar zuerst
+in Basis -4 konvertieren and anschliessend in Basis -1+i, was zwar Vorteile hat,
+erfordert aber komplexere Arithmetik und ist von uns nicht implementiert und nur
+als Ausblick erwaenht.
+
+Danke fuer ihre Aufmerksamkeit!
