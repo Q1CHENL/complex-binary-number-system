@@ -171,12 +171,19 @@ unsigned __int128 str_to_uint128(char* s) {
 }
 
 // find the index of ',' in arg
+// return 0 for cases of invalid arg: 
+// 1. comma is at index 0
+// 3. multiple commas found
 int comma(char* arg) {
+    int index = 0;
+    int cnt = 0; // comma count
     for (int i = 0; arg[i] != '\0'; i++) {
-        if (arg[i] == ',')
-            return i;
+        if (arg[i] == ','){
+            index = i;
+            cnt++;
+        }
     }
-    return 0;
+    return cnt > 1 ? 0 : index;
 }
 
 // print the helper message
