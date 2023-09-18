@@ -1,6 +1,6 @@
-# cbns  
+# Complex binary number system  
 
-Complex binary number system: a converter between complex number and its binary representation.
+A converter between complex number and its binary representation.
 
 
 
