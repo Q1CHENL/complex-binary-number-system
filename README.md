@@ -1,4 +1,4 @@
-# Complex binary number system  
+# Complex Binary Number System  
 
 A converter between complex number and its binary representation.
 
